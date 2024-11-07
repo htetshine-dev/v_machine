@@ -26,7 +26,6 @@
     <link href="{{ asset('libs/flot/css/float-chart.css') }}" rel="stylesheet"/>
 
     @vite([
-        'resources/sass/app.scss', 
         'resources/js/app.js',
         'resources/css/style.min.css',
         'resources/js/waves.js',
