@@ -40,8 +40,3 @@ Route::get('/checkout_success/{order}', [CartController::class, 'success'])->nam
 
 Route::get('/order_history', [OrderHistoryController::class, 'list'])->name('order.list');
 
-// Route::prefix('/user')
-//     ->group(function() {
-//         Route::get('/create', [UserController::class, 'create'])->name('user.create');
-//     });
-

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
 
 class DashboardController extends Controller
 {
@@ -21,20 +22,14 @@ class DashboardController extends Controller
         $products = Product::paginate(6);
         $selectedProducts = $request->old('products', []);
 
+        if(Arr::first($this->breadCrumb) == 'api') {
+            return $products;
+        }
+
         return view('client.dashboard', [
             "breadCrumb" => $this->breadCrumb,
             "products" => $products,
             "selectedProducts" => $selectedProducts
         ]);
-    }
-
-    public function perchase(Request $request)
-    {
-        $request->validate([
-            'products' => 'required|array',
-            'products.*' => 'required',
-        ]);
-
-        dd(1);
     }
 }

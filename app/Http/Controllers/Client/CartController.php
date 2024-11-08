@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 
 class CartController extends Controller
 {
+    public $breadCrumb;
+
+    public function __construct() {
+        $breadCrumb = explode(".", Route::currentRouteName());
+        $this->breadCrumb = $breadCrumb;
+    }
+
     // Add Product to Cart
     public function addToCart(Request $request, $productId)
     {
@@ -36,6 +45,11 @@ class CartController extends Controller
         // Update the session with the cart
         session()->put('cart', $cart);
 
+
+        if(Arr::first($this->breadCrumb) == 'api') {
+            return session()->get('cart');
+        }
+
         // Redirect to the cart page or back to the product list
         return redirect()->back()->with('success', 'Product added to cart!');
     }
@@ -47,6 +61,10 @@ class CartController extends Controller
 
         foreach ($cart as $product) {
             $total += $product['price'] * $product['quantity'];
+        }
+
+        if(Arr::first($this->breadCrumb) == 'api') {
+            return $total;
         }
 
         return view('cart.index', compact('total'));
@@ -63,6 +81,11 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
+        if(Arr::first($this->breadCrumb) == 'api') {
+            return session()->get('cart');
+        }
+
+
         return redirect()->back()->with('success', 'Product removed from cart!');
     }
 
@@ -71,6 +94,9 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {
+            if(Arr::first($this->breadCrumb) == 'api') {
+                return ['error'=> 'Your cart is empty.' ];
+            }
             return redirect()->route('dashboard')->with('error', 'Your cart is empty.');
         }
 
@@ -79,10 +105,16 @@ class CartController extends Controller
             $product = Product::find($productId);
             
             if (!$product) {
+                if(Arr::first($this->breadCrumb) == 'api') {
+                    return ['error'=> 'One of the products in your cart does not exist.' ];
+                }
                 return redirect()->route('product.index')->with('error', 'One of the products in your cart does not exist.');
             }
 
             if ($product->in_stock < $details['quantity']) {
+                if(Arr::first($this->breadCrumb) == 'api') {
+                    return ['error'=> "The product '{$product->name}' is out of stock or does not have enough stock." ];
+                }
                 return redirect()->route('product.index')->with('error', "The product '{$product->name}' is out of stock or does not have enough stock.");
             }
         }
@@ -125,16 +157,26 @@ class CartController extends Controller
             // Clear the cart after a successful transaction
             session()->forget('cart');
 
+            if(Arr::first($this->breadCrumb) == 'api') {
+                return ['order_id' => $orderId, 'success'=> 'Order placed successfully!' ];
+            }
+
             return redirect()->route('checkout.success', $order->id)->with('success', 'Order placed successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
+            if(Arr::first($this->breadCrumb) == 'api') {
+                return ['error'=> 'Failed to place order. Please try again.' ];
+            }
             return redirect()->route('dashboard')->with('error', 'Failed to place order. Please try again.');
         }
     }
 
     public function success(Order $order)
     {
+        if(Arr::first($this->breadCrumb) == 'api') {
+            return $order;
+        }
         return view('cart.success', ['order' => $order]);
     }
 }
