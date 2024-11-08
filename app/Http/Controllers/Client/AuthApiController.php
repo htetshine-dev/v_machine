@@ -13,7 +13,7 @@ use Illuminate\Validation\Rules;
 use App\Traits\RelativePathTrait;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
-
+use Validator;
 
 class AuthApiController extends Controller
 {
@@ -26,14 +26,21 @@ class AuthApiController extends Controller
 
     // Register API
     public function register(Request $request)
-    {      
-        $request->validate([
+    {
+        $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-        
-        DB::transaction(function() use($request) {
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = DB::transaction(function() use($request) {
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -42,6 +49,7 @@ class AuthApiController extends Controller
 
             $role = Role::findByName($this->relativeRole);
             $user->assignRole($role);
+            return $user;
         });
 
         $token = JWTAuth::fromUser($user);
@@ -60,7 +68,15 @@ class AuthApiController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (!$token = JWTAuth::attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+        $user = User::where('email', $credentials['email'])->first();
+        // dd($user, $user->getRoleNames());
+
+        if (!$user || $user->getRoleNames()->first() != 'client') {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -78,6 +94,10 @@ class AuthApiController extends Controller
     // Logout API
     public function logout()
     {
+        if (!auth()->check()) {
+            return response()->json(['error' => 'No user is currently logged in'], 401);
+        }
+        
         auth()->logout();
 
         return response()->json(['message' => 'Successfully logged out']);

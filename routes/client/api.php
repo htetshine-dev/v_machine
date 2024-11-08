@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Client\{DashboardController, CartController, OrderHistoryController, AuthApiController};
+use App\Http\Controllers\Client\{DashboardController, CartApiController, OrderHistoryController, AuthApiController};
 
 /*
 |--------------------------------------------------------------------------
@@ -25,11 +25,7 @@ Route::post('/logout', [AuthApiController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::post('/add_to_cart/{productId}', [CartController::class, 'addToCart'])->name('addToCart');
-Route::get('/cart', [CartController::class, 'viewCart'])->name('viewCart');
-Route::delete('/remove_from_cart/{productId}', [CartController::class, 'removeFromCart'])->name('removeFromCart');
-Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
-Route::get('/checkout_success/{order}', [CartController::class, 'success'])->name('checkout.success');
+Route::post('/checkout', [CartApiController::class, 'checkout'])->name('checkout');
 
 Route::get('/order_history', [OrderHistoryController::class, 'list'])->name('order.list');
 

@@ -84,6 +84,7 @@ class ProductController extends Controller
         if($product->in_stock == 0 ) {
             $product->quantity_available = $request->quantity_available;
             $product->in_stock = $request->quantity_available;
+            $product->out_stock = 0;
         }
         
         $product->updated_user_id = Auth::user()->id;

@@ -41,10 +41,9 @@ class CartController extends Controller
                 'quantity' => 1,
             ];
         }
-
+        
         // Update the session with the cart
         session()->put('cart', $cart);
-
 
         if(Arr::first($this->breadCrumb) == 'api') {
             return session()->get('cart');
@@ -94,9 +93,6 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {
-            if(Arr::first($this->breadCrumb) == 'api') {
-                return ['error'=> 'Your cart is empty.' ];
-            }
             return redirect()->route('dashboard')->with('error', 'Your cart is empty.');
         }
 
@@ -105,16 +101,10 @@ class CartController extends Controller
             $product = Product::find($productId);
             
             if (!$product) {
-                if(Arr::first($this->breadCrumb) == 'api') {
-                    return ['error'=> 'One of the products in your cart does not exist.' ];
-                }
                 return redirect()->route('product.index')->with('error', 'One of the products in your cart does not exist.');
             }
 
             if ($product->in_stock < $details['quantity']) {
-                if(Arr::first($this->breadCrumb) == 'api') {
-                    return ['error'=> "The product '{$product->name}' is out of stock or does not have enough stock." ];
-                }
                 return redirect()->route('product.index')->with('error', "The product '{$product->name}' is out of stock or does not have enough stock.");
             }
         }
@@ -149,6 +139,7 @@ class CartController extends Controller
 
                 // Reduce the product's in_stock
                 $product->in_stock -= $details['quantity'];
+                $product->out_stock += $details['quantity'];
                 $product->save();
             }
 
@@ -157,26 +148,18 @@ class CartController extends Controller
             // Clear the cart after a successful transaction
             session()->forget('cart');
 
-            if(Arr::first($this->breadCrumb) == 'api') {
-                return ['order_id' => $orderId, 'success'=> 'Order placed successfully!' ];
-            }
-
             return redirect()->route('checkout.success', $order->id)->with('success', 'Order placed successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            if(Arr::first($this->breadCrumb) == 'api') {
-                return ['error'=> 'Failed to place order. Please try again.' ];
-            }
+            
             return redirect()->route('dashboard')->with('error', 'Failed to place order. Please try again.');
         }
     }
 
     public function success(Order $order)
     {
-        if(Arr::first($this->breadCrumb) == 'api') {
-            return $order;
-        }
+
         return view('cart.success', ['order' => $order]);
     }
 }
