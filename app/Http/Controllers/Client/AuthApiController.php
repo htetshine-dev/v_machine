@@ -26,13 +26,13 @@ class AuthApiController extends Controller
 
     // Register API
     public function register(Request $request)
-    {        
+    {      
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
+        dd(1);
         DB::transaction(function() use($request) {
             $user = User::create([
                 'name' => $request->name,
