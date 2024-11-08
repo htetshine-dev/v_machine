@@ -32,7 +32,7 @@ class AuthApiController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-        dd(1);
+        
         DB::transaction(function() use($request) {
             $user = User::create([
                 'name' => $request->name,
