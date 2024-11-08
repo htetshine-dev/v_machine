@@ -72,6 +72,7 @@ class CartApiController extends Controller
 
                 // Reduce the product's in_stock
                 $product->in_stock -= $details['quantity'];
+                $product->out_stock += $details['quantity'];
                 $product->save();
             }
 
