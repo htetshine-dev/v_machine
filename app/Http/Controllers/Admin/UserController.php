@@ -47,7 +47,7 @@ class UserController extends Controller
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        DB::transaction(function() use($request) {
+        $user = DB::transaction(function() use($request) {
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -58,9 +58,11 @@ class UserController extends Controller
             $user->assignRole($role);
 
             event(new Registered($user));
+
+            return $user;
         });
 
-        return redirect()->route('admin.user.list');
+        return redirect()->route('admin.user.list')->with('success', $user->name.' was successfully created.');
     }
 
     public function edit(User $user)
@@ -91,7 +93,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.user.list')->with('success', 'User updated successfully');
+        return redirect()->route('admin.user.list')->with('success', $user->name . ' updated successfully');
     }
 
     public function detail(User $user)

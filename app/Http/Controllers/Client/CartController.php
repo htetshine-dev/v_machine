@@ -101,11 +101,11 @@ class CartController extends Controller
             $product = Product::find($productId);
             
             if (!$product) {
-                return redirect()->route('product.index')->with('error', 'One of the products in your cart does not exist.');
+                return redirect()->route('dashboard')->with('error', 'One of the products in your cart does not exist.');
             }
 
             if ($product->in_stock < $details['quantity']) {
-                return redirect()->route('product.index')->with('error', "The product '{$product->name}' is out of stock or does not have enough stock.");
+                return redirect()->route('dashboard')->with('error', "The product '{$product->name}' is out of stock or does not have enough stock.");
             }
         }
 

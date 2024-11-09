@@ -54,7 +54,7 @@ class ProductController extends Controller
 
         if ($product) {
             // Redirect to products list with success message
-            return redirect()->route('admin.product.list')->with('success', 'Product created successfully.');
+            return redirect()->route('admin.product.list')->with('success', $product->name . ' created successfully.');
         } else {
             // Redirect back with error message if creation failed
             return redirect()->back()->with('error', 'Product creation failed. Please try again.');
@@ -91,7 +91,7 @@ class ProductController extends Controller
 
         $product->save();
 
-        return redirect()->route('admin.product.list')->with('success', 'Product updated successfully');
+        return redirect()->route('admin.product.list')->with('success', $product->name . ' updated successfully');
     }
 
     public function detail(Product $product)

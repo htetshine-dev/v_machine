@@ -5,10 +5,9 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/sass/app.css',
+                'resources/css/app.css',
                 'resources/js/app.js',
-                // 'resources/css/app.css',
-                // 'resources/js/app.js',
+                // 'resources/js/cleint-app.js',
                 // 'resources/css/style.min.css',
                 // 'resources/js/waves.js',
                 // 'resources/js/sidebarmenu.js',

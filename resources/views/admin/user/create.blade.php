@@ -20,6 +20,7 @@
                         name="name"
                         type="text"
                         class="required form-control"
+                        value="{{ old('name') }}"
                     />
                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                 </div>
@@ -30,6 +31,7 @@
                         name="email"
                         type="email"
                         class="required form-control"
+                        value="{{ old('email') }}"
                     />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
@@ -42,8 +44,8 @@
                       style="width: 100%; height: 36px"
                     >
                       <option value="">Select</option>
-                        <option value="admin">Admin</option>
-                        <option value="client">User</option>
+                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                        <option value="client" {{ old('role') == 'client' ? 'selected' : '' }}>User</option>
                     </select>
                     <x-input-error :messages="$errors->get('role')" class="mt-2" />
                 </div>
