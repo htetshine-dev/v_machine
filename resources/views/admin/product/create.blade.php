@@ -21,6 +21,7 @@
                         type="text"
                         placeholder="Enter a product's name"
                         class="required form-control"
+                        value="{{ old('name') }}"
                     />
                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                 </div>
@@ -34,6 +35,7 @@
                         min="0"
                         placeholder="Enter a decimal value"
                         class="required form-control"
+                        value="{{ old('price') }}"
                     />
                     <x-input-error :messages="$errors->get('price')" class="mt-2" />
                 </div>
@@ -45,6 +47,7 @@
                         type="number"
                         placeholder="Enter a available quantity"
                         class="required form-control"
+                        value="{{ old('quantity_available') }}"
                     />
                     <x-input-error :messages="$errors->get('quantity_available')" class="mt-2" />
                 </div>

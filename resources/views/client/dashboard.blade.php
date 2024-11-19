@@ -14,6 +14,12 @@
                             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                                 <div class="p-6 text-gray-900 dark:text-gray-100">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                                        @if (session('error'))
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                {{ session('error') }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                        @endif
                                         @foreach($products as $product)
                                         <div class="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-lg shadow-lg overflow-hidden">
                                             <div class="p-6 text-white">
